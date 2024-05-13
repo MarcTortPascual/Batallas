@@ -18,6 +18,16 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Enemigo.hpp" />
+    <ClInclude Include="include\Magias.hpp" />
+    <ClInclude Include="include\Personaje.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Enemigo.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Personaje.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -71,22 +81,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\include;$(IncludePath);</IncludePath>
+    <IncludePath>D:\include;..\Battallas\include;$(IncludePath)</IncludePath>
     <ReferencePath>D:\lib\x64;</ReferencePath>
     <LibraryPath>D:\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\include;$(IncludePath);</IncludePath>
+    <IncludePath>D:\include;..\Battallas\include;$(IncludePath)</IncludePath>
     <ReferencePath>D:\lib\x64;</ReferencePath>
     <LibraryPath>D:\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\include;$(IncludePath);</IncludePath>
+    <IncludePath>D:\include;..\Battallas\include;$(IncludePath)</IncludePath>
     <ReferencePath>D:\lib\x64;</ReferencePath>
     <LibraryPath>D:\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\include;$(IncludePath);</IncludePath>
+    <IncludePath>D:\include;..\Battallas\include;$(IncludePath)</IncludePath>
     <ReferencePath>D:\lib\x64;</ReferencePath>
     <LibraryPath>D:\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -150,17 +160,6 @@
       <AdditionalDependencies>SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Enemigo.cpp" />
-    <ClCompile Include="Magias.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Personaje.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Enemigo.h" />
-    <ClInclude Include="Magias.h" />
-    <ClInclude Include="Personaje.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

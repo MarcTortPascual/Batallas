@@ -5,17 +5,16 @@ class Personaje
 {
 	private:
 		int x, y;
-		int vida, ataque;
+		int vida, ataque,maxvida;
 		string nombre;
 		int estado;
 		bool protegido;
 	public:
 		Personaje(string nombre, int ataque, int vida);
 		void getPos(int* x, int* y);
-		void getEstado(int* efecto, bool* paralizado, int*  danioxturno);
-		void setEstado(int efecto, bool paralizado, int danioxturno);
 		int getAtque();
 		int getVida();
+		string getNombre();
 		void setPos(int x, int h);
 		void setAtque(int a);
 		void setVida(int v);
