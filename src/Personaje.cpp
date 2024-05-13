@@ -1,5 +1,5 @@
-#include "Personaje.hpp"
-#include "Magias.h"
+#include <Personaje.hpp>
+#include <Magias.hpp>
 Personaje::Personaje(string nombre, int ataque, int vida)
 {
 	this->nombre = nombre;

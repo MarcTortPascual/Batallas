@@ -1,7 +1,5 @@
 #pragma once
-#include <iostream>
 #include <string>
-#include "Magias.h"
 using namespace std;
 class Personaje
 {
@@ -10,6 +8,7 @@ class Personaje
 		int vida, ataque;
 		string nombre;
 		int estado;
+		bool protegido;
 	public:
 		Personaje(string nombre, int ataque, int vida);
 		void getPos(int* x, int* y);
