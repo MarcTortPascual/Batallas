@@ -47,19 +47,22 @@ void Personaje::setVida(int v)
 {
 	this->vida = v;
 }
-
+int Personaje::getEstado() { return this->estado; }
+void Personaje::setEstado(int estado) {
+	this->estado = estado;
+}
 void Personaje::operator-(Personaje victima)
 {
-	if (this->estado & NORMAL ) {
+	if (victima.getEstado() & NORMAL) {
 		victima.setVida(victima.getVida() - this->ataque);
 	}
-	if (this->estado & QUEMADO) {
+	if (victima.getEstado() & QUEMADO) {
 		//dañado por fuego
 		victima.setVida(victima.getVida() - 3);
 		//daño normal
 		victima.setVida(victima.getVida() - this->ataque);
 	}
-	if (this->estado & CONFUSO) {
+	if (victima.getEstado() & CONFUSO) {
 		//daño x confusión
 		victima.setVida(victima.getVida() - victima.getAtque());
 	}

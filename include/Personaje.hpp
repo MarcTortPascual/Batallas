@@ -3,7 +3,7 @@
 using namespace std;
 class Personaje
 {
-	private:
+	protected:
 		int x, y;
 		int vida, ataque,maxvida;
 		string nombre;
@@ -15,6 +15,8 @@ class Personaje
 		int getAtque();
 		int getVida();
 		string getNombre();
+		int getEstado();
+		void setEstado(int estado);
 		void setPos(int x, int h);
 		void setAtque(int a);
 		void setVida(int v);
