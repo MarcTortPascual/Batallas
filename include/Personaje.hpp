@@ -5,7 +5,8 @@ class Personaje
 {
 	protected:
 		int x, y;
-		int vida, ataque,maxvida;
+		const int maxvida;
+		int vida, ataque;
 		string nombre;
 		int estado;
 		bool protegido;
@@ -13,6 +14,7 @@ class Personaje
 		Personaje(string nombre, int ataque, int vida);
 		void getPos(int* x, int* y);
 		int getAtque();
+		int getMaxVida();
 		int getVida();
 		string getNombre();
 		int getEstado();

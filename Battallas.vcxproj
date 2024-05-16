@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Boton.h" />
     <ClInclude Include="include\Enemigo.hpp" />
     <ClInclude Include="include\Magias.hpp" />
     <ClInclude Include="include\Personaje.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Boton.cpp" />
     <ClCompile Include="src\Enemigo.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Personaje.cpp" />

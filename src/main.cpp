@@ -7,6 +7,7 @@
 #include <Magias.hpp>
 #include <Enemigo.hpp>
 #include<vector>
+#include <Boton.h>
 #define ticks_for_frame 1000/60
 
 int main(int argc, char** argv) {
@@ -33,6 +34,8 @@ int main(int argc, char** argv) {
 
 	SDL_Surface* mapa_surf = IMG_Load("campo.png");
 	SDL_Texture* mapa = SDL_CreateTextureFromSurface(ctx, mapa_surf);
+
+	
 	bool run = true;
 	int start, end = SDL_GetTicks();
 	int delta = 0;
@@ -41,7 +44,9 @@ int main(int argc, char** argv) {
 	memset(mapaa, NULL, sizeof(int) * 100);
 	int ww, wh = 0;
 	int x, y;
+	int mx, my;
 	Personaje marc = Personaje("Marc", 10, 20);
+	EnemigoFinal boss = EnemigoFinal("Campeón", 5, 35);
 	vector<Personaje> enemigos;
 	int num;
 	for (int i = 1; i < 9; i++) {
@@ -53,7 +58,10 @@ int main(int argc, char** argv) {
 		enemigos.push_back(enemigo);
 		
 	}
-
+	boss.setPos(rand() % 9, 9);
+	boss.getPos(&x, &y);
+	mapaa[10 * y + x] = 2;
+	
 	marc.setPos(0, 0);
 	
 	while (run)
@@ -86,16 +94,49 @@ int main(int argc, char** argv) {
 					SDL_SetRenderDrawColor(ctx, 255, 175, 0, 255);
 					SDL_Rect info = { 0,0,ww / 2,wh / 2 };
 					SDL_RenderFillRect(ctx,&info);
+
+					SDL_SetRenderDrawColor(ctx, 255,125, 0, 255);
+					info = { ww / 2,wh / 2,ww / 2,wh / 2 };
+					SDL_RenderFillRect(ctx, &info);
+
 					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 					SDL_Color fg = { 0,0,0,255 };
-					SDL_Color bg = { 0, 0, 0, 0 };
+					SDL_Color bg = { 255,255, 255, 1 };
+
 					SDL_Surface* text = TTF_RenderText_Shaded(font,marc.getNombre().c_str(), fg, bg);
 					SDL_Texture* text_texture = SDL_CreateTextureFromSurface(ctx, text);
+
+					SDL_Surface* textene = TTF_RenderText_Shaded(font, enem.getNombre().c_str(), fg, bg);
+					SDL_Texture* text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
+
 					SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
+					int steplife = (ww / 2) / marc.getMaxVida();
+					int enesteplife = (ww / 2) / enem.getMaxVida();
+
+					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
+					info = { 0,70,ww / 2,10 };
+					SDL_RenderFillRect(ctx, &info);
+					
+					info = { ww/2,(wh/2)+70,ww / 2,10 };
+					SDL_RenderFillRect(ctx, &info);
+					
+					SDL_SetRenderDrawColor(ctx, 0, 255, 0, 255);
+					info = { 0,70,marc.getVida()*steplife,10};
+					SDL_RenderFillRect(ctx, &info);
+					info = { ww/2,(wh / 2)+70,enem.getVida() * enesteplife,10 };
+					SDL_RenderFillRect(ctx, &info);
 					SDL_Rect dest = { 0,0,w,h };
 					SDL_RenderCopy(ctx, text_texture, NULL, &dest);
+					SDL_QueryTexture(text_texturene, NULL, NULL, &w, &h);
+					dest = { ww / 2,wh / 2,w,h };
+					SDL_RenderCopy(ctx, text_texturene, NULL, &dest);
+					dest = { ww / 4-((ww / 4)/2),wh / 8,ww / 4,wh / 3};
+					SDL_RenderCopy(ctx, personaje_text, NULL, &dest);
 					SDL_FreeSurface(text);
 					SDL_DestroyTexture(text_texture);
+					SDL_FreeSurface(textene);
+					SDL_DestroyTexture(text_texturene);
+					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 				}
 				
 					
@@ -148,6 +189,10 @@ int main(int argc, char** argv) {
 				default:
 					break;
 				}
+			case SDL_MOUSEMOTION:
+				mx = e.motion.x;
+				my = e.motion.y;
+				break;
 			default:
 				break;
 			}
