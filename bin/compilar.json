@@ -3,7 +3,7 @@
     "compilador":"g++",
     "fuentes": "../src",
     "directorio_de_cabeceras": "../include",
-    "librerias": "SDL2 SDL2_image",
+    "librerias": "SDL2 SDL2_image SDL2_ttf",
     "directorio_del_ejecutable": "../release",
     "nombre":"Batalla.out"
 }

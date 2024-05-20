@@ -12,7 +12,7 @@ class Boton
 		SDL_Color* colortext;
 		std::string text;
 	public:
-		Boton(int x, int  y, int gapX, int gapY, SDL_Color* color, SDL_Color* colortext);
+		Boton(int x, int  y, int gapX, int gapY, SDL_Color* color, SDL_Color* colortext,std::string text);
 		void getGap(int* gapX, int* gapY);
 		void setGap(int gapX, int gapY);
 		void getPos(int* x, int* y);

@@ -1,6 +1,5 @@
 #include <Personaje.hpp>
 #include <Magias.hpp>
-#include <iostream>
 Personaje::Personaje(string nombre, int ataque, int vida):maxvida(vida)
 {
 	this->nombre = nombre;

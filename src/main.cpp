@@ -1,19 +1,18 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <Personaje.hpp>
 #include <Magias.hpp>
 #include <Enemigo.hpp>
-#include<vector>
+#include <vector>
 #include <Boton.h>
+#include <string>
 #define ticks_for_frame 1000/60
-
 int main(int argc, char** argv) {
 	TTF_Init();
 	TTF_Font * font = TTF_OpenFont("calibri.ttf", 64);
-	string nombres [] = {"Antonio","Ana","Maria","Jose","Luis","Óscar"};
+	std::string nombres [] = {"Antonio","Ana","Maria","Jose","Luis","Oscar","Julia","Pedro","Daniel"};
 	bool combate = false;
 	srand(time(NULL));
 	if (SDL_Init(SDL_INIT_EVERYTHING) <0 ) {
@@ -22,7 +21,6 @@ int main(int argc, char** argv) {
 	}
 	SDL_Window* ventana = SDL_CreateWindow("Batalla", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1020, 720, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
 	SDL_Renderer* ctx = SDL_CreateRenderer(ventana, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
 	SDL_Surface* personaje_surf = IMG_Load("personaje.png");
 	SDL_Texture* personaje_text = SDL_CreateTextureFromSurface(ctx, personaje_surf);
 
@@ -41,16 +39,18 @@ int main(int argc, char** argv) {
 	int delta = 0;
 	SDL_Event e;
 	int mapaa[100];
-	memset(mapaa, NULL, sizeof(int) * 100);
+	memset(mapaa, 0, sizeof(int) * 100);
 	int ww, wh = 0;
 	int x, y;
 	int mx, my;
+	SDL_Color  color = {0,0,0,0};
+	Boton atacar = Boton(0,0,6,6,&color,&color,"ATACAR!!!");
 	Personaje marc = Personaje("Marc", 10, 20);
-	EnemigoFinal boss = EnemigoFinal("Campeón", 5, 35);
+	EnemigoFinal boss = EnemigoFinal("Campeon", 5, 35);
 	vector<Personaje> enemigos;
 	int num;
 	for (int i = 1; i < 9; i++) {
-		num = rand() % 5;
+		num = rand() % 7;
 		Personaje  enemigo = Personaje(nombres[num], 1, 10);
 		enemigo.setPos(rand() % 9, i);
 		enemigo.getPos(&x, &y);
@@ -87,9 +87,8 @@ int main(int argc, char** argv) {
 			}
 			else {
 				Personaje enem = enemigos.at(SDL_clamp(y - 1, 0, enemigos.size() - 1));
-				SDL_Rect destpe;
 				int w, h;
-				if (mapaa[10 * y + x] == 1) {
+				
 				
 					SDL_SetRenderDrawColor(ctx, 255, 175, 0, 255);
 					SDL_Rect info = { 0,0,ww / 2,wh / 2 };
@@ -102,17 +101,27 @@ int main(int argc, char** argv) {
 					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 					SDL_Color fg = { 0,0,0,255 };
 					SDL_Color bg = { 255,255, 255, 1 };
-
+					
 					SDL_Surface* text = TTF_RenderText_Shaded(font,marc.getNombre().c_str(), fg, bg);
 					SDL_Texture* text_texture = SDL_CreateTextureFromSurface(ctx, text);
-
-					SDL_Surface* textene = TTF_RenderText_Shaded(font, enem.getNombre().c_str(), fg, bg);
-					SDL_Texture* text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
-
+					
+					SDL_Surface* textene ;
+					SDL_Texture* text_texturene;
+					if (mapaa[10*y+x]==1){
+						textene = TTF_RenderText_Shaded(font, enem.getNombre().c_str(), fg, bg);
+						text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
+					}else {
+						textene = TTF_RenderText_Shaded(font,boss.getNombre().c_str(),fg,bg);
+						text_texturene = SDL_CreateTextureFromSurface(ctx,textene);	 
+					}
 					SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
 					int steplife = (ww / 2) / marc.getMaxVida();
-					int enesteplife = (ww / 2) / enem.getMaxVida();
-
+					int enesteplife = 0;
+					if (mapaa[10*y+x]== 1){
+						enesteplife = (ww / 2) / enem.getMaxVida();
+					}else if (mapaa[10*y+x]==2){
+						enesteplife = (ww / 2) / boss.getMaxVida();
+					}
 					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 					info = { 0,70,ww / 2,10 };
 					SDL_RenderFillRect(ctx, &info);
@@ -123,7 +132,12 @@ int main(int argc, char** argv) {
 					SDL_SetRenderDrawColor(ctx, 0, 255, 0, 255);
 					info = { 0,70,marc.getVida()*steplife,10};
 					SDL_RenderFillRect(ctx, &info);
-					info = { ww/2,(wh / 2)+70,enem.getVida() * enesteplife,10 };
+					if (mapaa[10*y+x]== 1){
+						info = { ww/2,(wh / 2)+70,enem.getVida() * enesteplife,10 };
+					}else if (mapaa[10*y+x]==2){
+						info = { ww/2,(wh / 2)+70,boss.getVida() * enesteplife,10 };
+					}
+					
 					SDL_RenderFillRect(ctx, &info);
 					SDL_Rect dest = { 0,0,w,h };
 					SDL_RenderCopy(ctx, text_texture, NULL, &dest);
@@ -132,12 +146,24 @@ int main(int argc, char** argv) {
 					SDL_RenderCopy(ctx, text_texturene, NULL, &dest);
 					dest = { ww / 4-((ww / 4)/2),wh / 8,ww / 4,wh / 3};
 					SDL_RenderCopy(ctx, personaje_text, NULL, &dest);
+					dest = {(ww/2)+ww / 4-((ww / 4)/2),wh / 8 + (wh / 2),ww / 4,wh / 3};
+					if (mapaa[10*y+x]== 1){
+						SDL_RenderCopy(ctx, enemigo_text, NULL, &dest);
+					}else if (mapaa[10*y+x]==2){
+						SDL_RenderCopy(ctx, boss_text, NULL, &dest);
+					}
+					SDL_Color bot = {155,155,155,255};
+					SDL_Color botcol= {255,255,255,255};
+					SDL_Color src = {55,55,55,255};
+					//atacar.setPos(0, wh/4*3);
+					//atacar.setColor(&bot,&botcol);
+					//atacar.render(ctx, font, &src);
 					SDL_FreeSurface(text);
 					SDL_DestroyTexture(text_texture);
 					SDL_FreeSurface(textene);
 					SDL_DestroyTexture(text_texturene);
 					SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
-				}
+				
 				
 					
 				
