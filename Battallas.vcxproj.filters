@@ -38,7 +38,7 @@
     <ClCompile Include="src\Personaje.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Boton.cpp">
+    <ClCompile Include="src\Boton.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

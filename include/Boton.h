@@ -5,7 +5,7 @@
 class Boton
 {
 	private:
-		int x, y;
+		int x, y,w,h;
 		int gapX, gapY;
 		SDL_Rect* box;
 		SDL_Color* color;

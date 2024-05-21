@@ -1,4 +1,3 @@
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -44,7 +43,7 @@ int main(int argc, char** argv) {
 	int x, y;
 	int mx, my;
 	SDL_Color  color = {0,0,0,0};
-	Boton atacar = Boton(0,0,6,6,&color,&color,"ATACAR!!!");
+	Boton atacar = Boton(0,0,26,26,&color,&color,"ATACAR!!!");
 	Personaje marc = Personaje("Marc", 10, 20);
 	EnemigoFinal boss = EnemigoFinal("Campeon", 5, 35);
 	vector<Personaje> enemigos;
@@ -86,6 +85,20 @@ int main(int argc, char** argv) {
 				SDL_RenderCopy(ctx, personaje_text, NULL, &destpe);
 			}
 			else {
+				SDL_Color source = { 55, 55, 55, 255 };
+				if (atacar.hover(mx, my)) {
+					SDL_Color text = { 0,0,0,255 };
+					SDL_Color bot = { 155,155,0,255 };
+					atacar.setColor(&bot, &text);
+				
+				}
+				else {
+					SDL_Color text = { 255,255,255,255 };
+					SDL_Color bot = { 155,155,155,255 };
+					atacar.setColor(&bot, &text);
+					
+				}
+				atacar.render(ctx, font, &source);
 				Personaje enem = enemigos.at(SDL_clamp(y - 1, 0, enemigos.size() - 1));
 				int w, h;
 				
@@ -155,9 +168,9 @@ int main(int argc, char** argv) {
 					SDL_Color bot = {155,155,155,255};
 					SDL_Color botcol= {255,255,255,255};
 					SDL_Color src = {55,55,55,255};
-					//atacar.setPos(0, wh/4*3);
-					//atacar.setColor(&bot,&botcol);
-					//atacar.render(ctx, font, &src);
+					atacar.setPos(0, wh/4*3);
+					atacar.setColor(&bot,&botcol);
+					atacar.render(ctx, font, &src);
 					SDL_FreeSurface(text);
 					SDL_DestroyTexture(text_texture);
 					SDL_FreeSurface(textene);
@@ -193,24 +206,33 @@ int main(int argc, char** argv) {
 				switch (e.key.keysym.sym)
 				{
 				case SDLK_w:
-					marc.getPos(&x, &y);
-					y--;
-					marc.setPos(SDL_clamp(x,0,9), SDL_clamp(y, 0, 9));
+					if (!combate) {
+						marc.getPos(&x, &y);
+						y--;
+						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					}
+					
 					break;
 				case SDLK_s:
-					marc.getPos(&x, &y);
-					y++;
-					marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					if (!combate) {
+						marc.getPos(&x, &y);
+						y++;
+						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					}
 					break;
 				case SDLK_d:
-					marc.getPos(&x, &y);
-					x++;
-					marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					if (!combate) {
+						marc.getPos(&x, &y);
+						x++;
+						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					}
 					break;
 				case SDLK_a:
-					marc.getPos(&x, &y);
-					x--;
-					marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					if (!combate) {
+						marc.getPos(&x, &y);
+						x--;
+						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+					}
 					break;
 				default:
 					break;
@@ -218,6 +240,7 @@ int main(int argc, char** argv) {
 			case SDL_MOUSEMOTION:
 				mx = e.motion.x;
 				my = e.motion.y;
+				
 				break;
 			default:
 				break;

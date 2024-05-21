@@ -25,7 +25,7 @@
     <ClInclude Include="include\Personaje.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Boton.cpp" />
+    <ClCompile Include="src\Boton.cpp" />
     <ClCompile Include="src\Enemigo.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Personaje.cpp" />
