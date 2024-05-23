@@ -41,16 +41,17 @@ int main(int argc, char** argv) {
 	memset(mapaa, 0, sizeof(int) * 100);
 	int ww, wh = 0;
 	int x, y;
-	int mx, my;
+	int mx = 0;
+	int my = 0;
 	SDL_Color  color = {0,0,0,0};
 	Boton atacar = Boton(0,0,26,26,&color,&color,"ATACAR!!!");
 	Personaje marc = Personaje("Marc", 10, 20);
-	EnemigoFinal boss = EnemigoFinal("Campeon", 5, 35);
+	EnemigoFinal boss = EnemigoFinal("Campeon", 5, 100);
 	vector<Personaje> enemigos;
 	int num;
 	for (int i = 1; i < 9; i++) {
 		num = rand() % 7;
-		Personaje  enemigo = Personaje(nombres[num], 1, 10);
+		Personaje  enemigo = Personaje(nombres[num], 1, 30);
 		enemigo.setPos(rand() % 9, i);
 		enemigo.getPos(&x, &y);
 		mapaa[10 * y + x] = 1;
@@ -73,6 +74,7 @@ int main(int argc, char** argv) {
 			SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 			SDL_SetRenderDrawBlendMode(ctx, SDL_BLENDMODE_BLEND);
 			SDL_RenderClear(ctx);
+			Personaje *enem = &enemigos.at(SDL_clamp(y - 1, 0, enemigos.size() - 1));
 			if (!combate) {
 				for (int y = 0; y < 10; y++) {
 					for (int x = 0; x < 10; x++) {
@@ -90,16 +92,17 @@ int main(int argc, char** argv) {
 					SDL_Color text = { 0,0,0,255 };
 					SDL_Color bot = { 155,155,0,255 };
 					atacar.setColor(&bot, &text);
-				
 				}
 				else {
-					SDL_Color text = { 255,255,255,255 };
 					SDL_Color bot = { 155,155,155,255 };
-					atacar.setColor(&bot, &text);
+					SDL_Color botcol = { 255,255,255,255 };
+					
+					atacar.setPos(0, wh / 4 * 3);
+					atacar.setColor(&bot, &botcol);
 					
 				}
-				atacar.render(ctx, font, &source);
-				Personaje enem = enemigos.at(SDL_clamp(y - 1, 0, enemigos.size() - 1));
+	
+				
 				int w, h;
 				
 				
@@ -118,20 +121,22 @@ int main(int argc, char** argv) {
 					SDL_Surface* text = TTF_RenderText_Shaded(font,marc.getNombre().c_str(), fg, bg);
 					SDL_Texture* text_texture = SDL_CreateTextureFromSurface(ctx, text);
 					
-					SDL_Surface* textene ;
-					SDL_Texture* text_texturene;
+					SDL_Surface* textene = TTF_RenderText_Shaded(font, enem->getNombre().c_str(), fg, bg);
+					SDL_Texture* text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
 					if (mapaa[10*y+x]==1){
-						textene = TTF_RenderText_Shaded(font, enem.getNombre().c_str(), fg, bg);
+						textene = TTF_RenderText_Shaded(font, enem->getNombre().c_str(), fg, bg);
 						text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
-					}else {
-						textene = TTF_RenderText_Shaded(font,boss.getNombre().c_str(),fg,bg);
-						text_texturene = SDL_CreateTextureFromSurface(ctx,textene);	 
+					}else if (mapaa[10 * y + x] == 2) {
+							textene = TTF_RenderText_Shaded(font, boss.getNombre().c_str(), fg, bg);
+							text_texturene = SDL_CreateTextureFromSurface(ctx, textene);
 					}
+						
+					
 					SDL_QueryTexture(text_texture, NULL, NULL, &w, &h);
 					int steplife = (ww / 2) / marc.getMaxVida();
 					int enesteplife = 0;
 					if (mapaa[10*y+x]== 1){
-						enesteplife = (ww / 2) / enem.getMaxVida();
+						enesteplife = (ww / 2) / enem->getMaxVida();
 					}else if (mapaa[10*y+x]==2){
 						enesteplife = (ww / 2) / boss.getMaxVida();
 					}
@@ -146,7 +151,8 @@ int main(int argc, char** argv) {
 					info = { 0,70,marc.getVida()*steplife,10};
 					SDL_RenderFillRect(ctx, &info);
 					if (mapaa[10*y+x]== 1){
-						info = { ww/2,(wh / 2)+70,enem.getVida() * enesteplife,10 };
+						
+						info = { ww/2,(wh / 2)+70,enem->getVida() * enesteplife,10 };
 					}else if (mapaa[10*y+x]==2){
 						info = { ww/2,(wh / 2)+70,boss.getVida() * enesteplife,10 };
 					}
@@ -165,12 +171,8 @@ int main(int argc, char** argv) {
 					}else if (mapaa[10*y+x]==2){
 						SDL_RenderCopy(ctx, boss_text, NULL, &dest);
 					}
-					SDL_Color bot = {155,155,155,255};
-					SDL_Color botcol= {255,255,255,255};
-					SDL_Color src = {55,55,55,255};
-					atacar.setPos(0, wh/4*3);
-					atacar.setColor(&bot,&botcol);
-					atacar.render(ctx, font, &src);
+					
+					atacar.render(ctx, font, &source);
 					SDL_FreeSurface(text);
 					SDL_DestroyTexture(text_texture);
 					SDL_FreeSurface(textene);
@@ -190,62 +192,87 @@ int main(int argc, char** argv) {
 			
 			
 			SDL_RenderPresent(ctx);
-			
-		}
-		else {
-			SDL_Delay(floor(ticks_for_frame - delta));
-		}
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
+			while (SDL_PollEvent(&e))
 			{
-			case SDL_QUIT:
-				run = false;
-				break;
-			case SDL_KEYDOWN:
-				switch (e.key.keysym.sym)
+				switch (e.type)
 				{
-				case SDLK_w:
-					if (!combate) {
-						marc.getPos(&x, &y);
-						y--;
-						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
-					}
-					
+				case SDL_QUIT:
+					run = false;
 					break;
-				case SDLK_s:
-					if (!combate) {
-						marc.getPos(&x, &y);
-						y++;
-						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+				case SDL_MOUSEBUTTONDOWN:
+					switch (e.button.button)
+					{
+					case SDL_BUTTON_LEFT:
+						if (atacar.hover(mx, my)) {
+							if (marc.getVida() > 0 && enem->getVida() > 0) {
+								int x, y;
+								marc.getPos(&x, &y);
+								marc.atacar(enem);
+								enem->atacar(&marc);
+								
+								
+							}
+							else {
+								if (enem->getVida() <= 0) {
+									mapaa[10 * y + x] = 0;
+								}
+								combate = false;
+							}
+						}
+						
+					default:
+						break;
 					}
 					break;
-				case SDLK_d:
-					if (!combate) {
-						marc.getPos(&x, &y);
-						x++;
-						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+				case SDL_KEYDOWN:
+					switch (e.key.keysym.sym)
+					{
+					case SDLK_w:
+						if (!combate) {
+							marc.getPos(&x, &y);
+							y--;
+							marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+						}
+
+						break;
+					case SDLK_s:
+						if (!combate) {
+							marc.getPos(&x, &y);
+							y++;
+							marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+						}
+						break;
+					case SDLK_d:
+						if (!combate) {
+							marc.getPos(&x, &y);
+							x++;
+							marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+						}
+						break;
+					case SDLK_a:
+						if (!combate) {
+							marc.getPos(&x, &y);
+							x--;
+							marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
+						}
+						break;
+					default:
+						break;
 					}
-					break;
-				case SDLK_a:
-					if (!combate) {
-						marc.getPos(&x, &y);
-						x--;
-						marc.setPos(SDL_clamp(x, 0, 9), SDL_clamp(y, 0, 9));
-					}
+				case SDL_MOUSEMOTION:
+					mx = e.motion.x;
+					my = e.motion.y;
+
 					break;
 				default:
 					break;
 				}
-			case SDL_MOUSEMOTION:
-				mx = e.motion.x;
-				my = e.motion.y;
-				
-				break;
-			default:
-				break;
 			}
 		}
+		else {
+			SDL_Delay(floor(ticks_for_frame - delta));
+		}
+		
 		
 	}
 	SDL_DestroyWindow(ventana);

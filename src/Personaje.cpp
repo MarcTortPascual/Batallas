@@ -1,5 +1,6 @@
 #include <Personaje.hpp>
 #include <Magias.hpp>
+#include <iostream>
 Personaje::Personaje(string nombre, int ataque, int vida):maxvida(vida)
 {
 	this->nombre = nombre;
@@ -48,25 +49,29 @@ void Personaje::setAtque(int a)
 
 void Personaje::setVida(int v)
 {
+	std::cout << "coño" << endl;
 	this->vida = v;
 }
 int Personaje::getEstado() { return this->estado; }
 void Personaje::setEstado(int estado) {
 	this->estado = estado;
 }
-void Personaje::operator-(Personaje victima)
+void  Personaje::atacar(Personaje *victima)
 {
-	if (victima.getEstado() & NORMAL) {
-		victima.setVida(victima.getVida() - this->ataque);
+
+	if (victima->getEstado() == NORMAL) {
+		
+		victima->setVida(victima->getVida() - this->ataque);
+		
 	}
-	if (victima.getEstado() & QUEMADO) {
+	if (victima->getEstado() == QUEMADO) {
 		//dañado por fuego
-		victima.setVida(victima.getVida() - 3);
+		victima->setVida(victima->getVida() - 3);
 		//daño normal
-		victima.setVida(victima.getVida() - this->ataque);
+		victima->setVida(victima->getVida() - this->ataque);
 	}
-	if (victima.getEstado() & CONFUSO) {
+	if (victima->getEstado() == CONFUSO) {
 		//daño x confusión
-		victima.setVida(victima.getVida() - victima.getAtque());
+		victima->setVida(victima->getVida() - victima->getAtque());
 	}
 }

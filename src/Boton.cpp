@@ -59,8 +59,7 @@ void Boton::setColor(SDL_Color* color, SDL_Color* colortext)
 
 bool Boton::hover(int x, int y)
 {
-	
-	return (x > this->x && x < this->x + this->w) && (y > this->y && y < this->y + this->h);
+	return (x > this->x && x < this->x + (this->w + this->gapX)) && (y > this->y && y < this->y + (this->h + this->gapY));
 }
 
 

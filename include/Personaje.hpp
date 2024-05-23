@@ -22,7 +22,7 @@ class Personaje
 		void setPos(int x, int h);
 		void setAtque(int a);
 		void setVida(int v);
-		void operator - (Personaje victima);
+		void atacar (Personaje *victima);
 			
 
 };

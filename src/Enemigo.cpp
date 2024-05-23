@@ -7,12 +7,12 @@ EnemigoFinal::EnemigoFinal(string nombre, int ataque, int vida) :Personaje(nombr
 
 void EnemigoFinal::hechizar(int magia, Personaje victima) {
 	if (this->hechizos > 5) {
-		if (victima.getEstado() & NORMAL) {
-			victima.setEstado(~(victima.getEstado() & NORMAL));
+		if (victima.getEstado() == NORMAL) {
+			victima.setEstado(NORMAL);
 			
 		}
-		victima.setEstado(victima.getEstado() | magia);
-		victima.setEstado(victima.getEstado() | magia );
+		victima.setEstado(magia);
+		victima.setEstado(magia );
 		
 		this->hechizos--;
 	}
