@@ -12,8 +12,6 @@ void EnemigoFinal::hechizar(int magia, Personaje victima) {
 			
 		}
 		victima.setEstado(magia);
-		victima.setEstado(magia );
-		
 		this->hechizos--;
 	}
 	else {
@@ -21,5 +19,5 @@ void EnemigoFinal::hechizar(int magia, Personaje victima) {
 	}
 }
 
-
+int EnemigoFinal::getHechizos() { return this->hechizos; }
 

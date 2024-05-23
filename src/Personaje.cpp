@@ -61,17 +61,17 @@ void  Personaje::atacar(Personaje *victima)
 
 	if (victima->getEstado() == NORMAL) {
 		
-		victima->setVida(victima->getVida() - this->ataque);
+		victima->setVida(victima->getVida() -  (rand() % this->ataque));
 		
 	}
 	if (victima->getEstado() == QUEMADO) {
 		//dañado por fuego
-		victima->setVida(victima->getVida() - 3);
+		victima->setVida(victima->getVida() -  (rand()% 3));
 		//daño normal
-		victima->setVida(victima->getVida() - this->ataque);
+		victima->setVida(victima->getVida() -  (rand() % this->ataque));
 	}
 	if (victima->getEstado() == CONFUSO) {
 		//daño x confusión
-		victima->setVida(victima->getVida() - victima->getAtque());
+		victima->setVida(victima->getVida() - (rand() % victima->getAtque()));
 	}
 }
