@@ -7,7 +7,7 @@ private:
 	
 public:
 	EnemigoFinal(string nombre, int ataque, int vida);
-	void hechizar(int magia, Personaje victima);
+	void hechizar(int magia, Personaje &victima);
 	int getHechizos();
 };
 

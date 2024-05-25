@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <Personaje.hpp>
 #include <Magias.hpp>
@@ -66,7 +68,7 @@ int main(int argc, char** argv) {
 	mapaa[10 * y + x] = 2;
 	
 	marc.setPos(0, 0);
-	
+	string gameovertext = "GAMEOVER";
 	while (run)
 	{
 		SDL_GetWindowSizeInPixels(ventana, &ww, &wh);
@@ -74,8 +76,8 @@ int main(int argc, char** argv) {
 		delta = start - end;
 		if (delta > ticks_for_frame) {
 			if (gameover) {
-				
-				SDL_Surface* final = TTF_RenderText_Shaded(font, "GAMEOVER", { 0,0,0,255 }, { 0,0,0,1 });
+				TTF_SetFontSize(font, 1024);
+				SDL_Surface* final = TTF_RenderText_Shaded(font, gameovertext.c_str(), { 255,255,0,255 }, { 0,0,0,1 });
 				
 				SDL_Texture* text_final = SDL_CreateTextureFromSurface(ctx, final);
 				SDL_RenderClear(ctx);
@@ -114,6 +116,7 @@ int main(int argc, char** argv) {
 					SDL_RenderCopy(ctx, personaje_text, NULL, &destpe);
 				}
 				else {
+					
 					SDL_Color source = { 55, 55, 55, 255 };
 					if (atacar.hover(mx, my)) {
 						SDL_Color text = { 0,0,0,255 };
@@ -210,6 +213,9 @@ int main(int argc, char** argv) {
 					}
 
 					atacar.render(ctx, font, &source);
+					SDL_Rect estpost = { 10,100,32,32 };
+					SDL_Rect estsrc = { marc.getEstado() * 16,0,16,16 };
+					SDL_RenderCopy(ctx, estados, &estsrc, &estpost);
 					SDL_FreeSurface(textene2);
 					SDL_DestroyTexture(text2);
 					SDL_FreeSurface(text);
@@ -230,7 +236,7 @@ int main(int argc, char** argv) {
 				}
 
 
-				SDL_RenderPresent(ctx);
+				
 				while (SDL_PollEvent(&e))
 				{
 					switch (e.type)
@@ -245,8 +251,8 @@ int main(int argc, char** argv) {
 							if (atacar.hover(mx, my)) {
 								int x, y;
 								marc.getPos(&x, &y);
-								if (mapaa[10 * y * x] == 1) {
-									if (marc.getVida() >= 0 && enem->getVida() >= 0) {
+								if (mapaa[10 * y + x] == 1) {
+									if (marc.getVida() >  0 && enem->getVida() > 0) {
 
 										marc.atacar(enem);
 										enem->atacar(&marc);
@@ -264,27 +270,32 @@ int main(int argc, char** argv) {
 										combate = false;
 									}
 								}
-								else if(mapaa[10 * y * x] == 2) {
-									if (marc.getVida() >= 0 && boss.getVida() >= 0) {
-
-										marc.atacar(enem);
-										int mov = rand() % 1;
-										if (mov == 0) {
-											enem->atacar(&marc);
+								else if(mapaa[10 * y + x] == 2) {
+									if (marc.getVida() > 0 && boss.getVida() > 0) {
+										if (marc.getEstado() != CONFUSO && marc.getEstado() != PARALIZADO){
+											marc.atacar(&boss);
 										}
-										else {
-											int mov2 = rand() %1 + 4;
-											boss.hechizar(mov2,marc);
-										}
-										SDL_Rect estpost = { 10,70,16,16 };
-										SDL_Rect estsrc = { marc.getEstado() * 16,0,16,16 };
-										SDL_RenderCopy(ctx, estados, &estsrc, &estpost);
 										
-
+										int mov = rand() % 101;
+										if (boss.getHechizos() > 0){
+											if (mov <= 18) {
+												int mov2 = 1 + rand() %3;
+												boss.hechizar(mov2,marc);
+											}
+											else {
+												enem->atacar(&marc);
+											
+											}
+										}else{
+											boss.atacar(&marc);
+										}
 									}
 									else {
-										if (enem->getVida() <= 0) {
-											mapaa[10 * y + x] = 0;
+										mapaa[10 * y + x] = 0;
+										if (boss.getVida() <= 0) {
+										
+											gameovertext = "victoria";
+											gameover = true;
 										}
 										if (marc.getVida() <= 0) {
 											gameover = true;
@@ -345,6 +356,7 @@ int main(int argc, char** argv) {
 					}
 				}
 			}
+			SDL_RenderPresent(ctx);
 		}
 		else {
 			SDL_Delay(floor(ticks_for_frame - delta));

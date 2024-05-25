@@ -5,12 +5,8 @@ EnemigoFinal::EnemigoFinal(string nombre, int ataque, int vida) :Personaje(nombr
 	this->hechizos = 1 + rand() % 5;
 }
 
-void EnemigoFinal::hechizar(int magia, Personaje victima) {
-	if (this->hechizos > 5) {
-		if (victima.getEstado() == NORMAL) {
-			victima.setEstado(NORMAL);
-			
-		}
+void EnemigoFinal::hechizar(int magia, Personaje &victima) {
+	if (this->hechizos > 0) {
 		victima.setEstado(magia);
 		this->hechizos--;
 	}

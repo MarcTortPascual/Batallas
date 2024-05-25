@@ -49,7 +49,6 @@ void Personaje::setAtque(int a)
 
 void Personaje::setVida(int v)
 {
-	std::cout << "coño" << endl;
 	this->vida = v;
 }
 int Personaje::getEstado() { return this->estado; }
