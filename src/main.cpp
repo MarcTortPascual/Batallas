@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <Personaje.hpp>
@@ -13,7 +12,7 @@
 int main(int argc, char** argv) {
 	TTF_Init();
 	TTF_Font * font = TTF_OpenFont("calibri.ttf", 64);
-	std::string nombres [] = {"Antonio","Ana","Maria","Jose","Luis","Oscar","Julia","Pedro","Daniel"};
+	std::string nombres [] = {"Antonio","Ana","Maria","Jose","Luis","Oscar","Pedro","Daniel"};
 	bool combate = false;
 	srand(time(NULL));
 	if (SDL_Init(SDL_INIT_EVERYTHING) <0 ) {
@@ -49,7 +48,7 @@ int main(int argc, char** argv) {
 	int mx = 0;
 	int my = 0;
 	SDL_Color  color = {0,0,0,0};
-	Boton atacar = Boton(0,0,26,26,&color,&color,"ATACAR!!!");
+	Boton atacar = Boton(0,0,26,26,&color,&color,"ATACAR!!!",&e);
 	Personaje marc = Personaje("Marc", 10, 25);
 	EnemigoFinal boss = EnemigoFinal("Campeon", 5, 100);
 	vector<Personaje> enemigos;
@@ -86,6 +85,7 @@ int main(int argc, char** argv) {
 				SDL_RenderPresent(ctx);
 				while (SDL_PollEvent(&e))
 				{
+					atacar.set_evento(&e);
 					switch (e.type)
 					{
 					case SDL_QUIT:
@@ -97,8 +97,6 @@ int main(int argc, char** argv) {
 				}
 			}
 			else {
-
-
 				end = start;
 				SDL_SetRenderDrawColor(ctx, 55, 55, 55, 255);
 				SDL_SetRenderDrawBlendMode(ctx, SDL_BLENDMODE_BLEND);
@@ -118,7 +116,7 @@ int main(int argc, char** argv) {
 				else {
 					
 					SDL_Color source = { 55, 55, 55, 255 };
-					if (atacar.hover(mx, my)) {
+					if (atacar.Is_hover()) {
 						SDL_Color text = { 0,0,0,255 };
 						SDL_Color bot = { 155,155,0,255 };
 						atacar.setColor(&bot, &text);
@@ -235,81 +233,68 @@ int main(int argc, char** argv) {
 					combate = false;
 				}
 
+				if (atacar.Is_clicked()){
+					int x, y;
+					marc.getPos(&x, &y);
+					if (mapaa[10 * y + x] == 1) {
+						if (marc.getVida() >=  0 && enem->getVida() > 0) {
+							marc.atacar(enem);
+							enem->atacar(&marc);
+						}
+						else {
+							if (enem->getVida() <= 0) {
+								mapaa[10 * y + x] = 0;
+							}
+							if (marc.getVida() <= 0) {
+								gameover = true;
 
+							}
+							combate = false;
+						}
+					}
+					else if(mapaa[10 * y + x] == 2) {
+						if (marc.getVida() > 0 && boss.getVida() > 0) {
+							if (marc.getEstado() != CONFUSO && marc.getEstado() != PARALIZADO){
+								marc.atacar(&boss);
+							}
+										
+							int mov = rand() % 101;
+							if (boss.getHechizos() > 0){
+								if (mov <= 18) {
+									int mov2 = 1 + rand() %3;
+									boss.hechizar(mov2,marc);
+								}
+								else {
+									enem->atacar(&marc);			
+								}
+							}
+							else{
+								boss.atacar(&marc);
+							}
+						}
+						else {
+							mapaa[10 * y + x] = 0;
+							if (boss.getVida() <= 0) {
+							
+								gameovertext = "victoria";
+								gameover = true;
+							}
+							if (marc.getVida() <= 0) {
+								gameover = true;
+
+							}
+							combate = false;
+						}
+					}
+				}
 				
 				while (SDL_PollEvent(&e))
 				{
+					atacar.set_evento(&e);
 					switch (e.type)
 					{
 					case SDL_QUIT:
 						run = false;
-						break;
-					case SDL_MOUSEBUTTONDOWN:
-						switch (e.button.button)
-						{
-						case SDL_BUTTON_LEFT:
-							if (atacar.hover(mx, my)) {
-								int x, y;
-								marc.getPos(&x, &y);
-								if (mapaa[10 * y + x] == 1) {
-									if (marc.getVida() >  0 && enem->getVida() > 0) {
-
-										marc.atacar(enem);
-										enem->atacar(&marc);
-
-
-									}
-									else {
-										if (enem->getVida() <= 0) {
-											mapaa[10 * y + x] = 0;
-										}
-										if (marc.getVida() <= 0) {
-											gameover = true;
-
-										}
-										combate = false;
-									}
-								}
-								else if(mapaa[10 * y + x] == 2) {
-									if (marc.getVida() > 0 && boss.getVida() > 0) {
-										if (marc.getEstado() != CONFUSO && marc.getEstado() != PARALIZADO){
-											marc.atacar(&boss);
-										}
-										
-										int mov = rand() % 101;
-										if (boss.getHechizos() > 0){
-											if (mov <= 18) {
-												int mov2 = 1 + rand() %3;
-												boss.hechizar(mov2,marc);
-											}
-											else {
-												enem->atacar(&marc);
-											
-											}
-										}else{
-											boss.atacar(&marc);
-										}
-									}
-									else {
-										mapaa[10 * y + x] = 0;
-										if (boss.getVida() <= 0) {
-										
-											gameovertext = "victoria";
-											gameover = true;
-										}
-										if (marc.getVida() <= 0) {
-											gameover = true;
-
-										}
-										combate = false;
-									}
-								}
-								
-							}
-
-						default:
-							break;
-						}
 						break;
 					case SDL_KEYDOWN:
 						switch (e.key.keysym.sym)

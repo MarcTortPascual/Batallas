@@ -1,0 +1,1 @@
+/usr/bin/g++-12 CMakeFiles/RPG.dir/src/Boton.cpp.o CMakeFiles/RPG.dir/src/Enemigo.cpp.o CMakeFiles/RPG.dir/src/main.cpp.o CMakeFiles/RPG.dir/src/Personaje.cpp.o -o RPG  -lSDL2 -lSDL2_image -lSDL2_ttf

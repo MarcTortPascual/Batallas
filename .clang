@@ -1,4 +1,0 @@
-CompileFlags:  
-    Add:
-        #[-I./include, -I../include,-std=c++2b, -I/usr/include/SDL2,-I../oo_sdl2/include]
-	[-ID:\include,-I.\include, -I..\include]
